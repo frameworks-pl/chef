@@ -1,3 +1,4 @@
+name             "wildfly"
 maintainer       "freelancer"
 maintainer_email "janusz@rsi.pl"
 license          "All rights reserved"
