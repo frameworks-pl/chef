@@ -7,6 +7,11 @@
 # All rights reserved - Do Not Redistribute
 #
 
+#By default java cookbook isntalls version 6, WildFly needs 7
+node.default['java']['jdk_version'] = '7'
+
+include_recipe "java"
+
 #Create WildFly System user
 user 'jboss' do
   comment 'JBoss'
