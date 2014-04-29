@@ -54,4 +54,10 @@ template File.join('etc', 'init.d', 'wildfly') do
   mode '0755'
 end
 
+# Start the Wildfly Service
+service 'wildfly' do
+  action :start
+end
+
+
 
