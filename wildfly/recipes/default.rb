@@ -29,6 +29,20 @@ group 'jboss' do
 end
 
 
+#------------------------------------------Jenkins support------------------------------------------
+
+#Create jenkins user
+user 'jenkins' do
+  comment 'Jenkins'
+  shell '/bin/bash'
+  supports manage_home: true
+  action [:create, :lock]
+end
+
+#Add jenkins user to JBoss group
+#------------------------------------------Jenkins support------------------------------------------
+
+
 # Download WildFly tarball
 remote_file "Download and install WildFly" do
   source node['wildfly']['url']
