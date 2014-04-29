@@ -31,9 +31,9 @@ remote_file "Download and install WildFly" do
 end
 
 execute "Unpack and install WildFly" do
-  command "tar -xvzf wildfly-8.0.0.Final.tar.gz"
+  command "tar -xvzf wildfly-8.0.0.Final.tar.gz -C /opt" 
   action :run
-  cwd "/root/temp"
+  cwd "/root"
 end
 
 
