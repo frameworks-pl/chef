@@ -25,7 +25,7 @@ end
 
 # Download WildFly tarball
 remote_file "Download and install WildFly" do
-  source "http://download.jboss.org/wildfly/8.0.0.Final/wildfly-8.0.0.Final.tar.gz"
+  source node['wildfly']['url']
   path "/root/temp/wildfly-8.0.0.Final.tar.gz"
   notifies :run, "execute[Unpack and install WildFly]", :immediately
 end
