@@ -11,6 +11,7 @@
 node.default['java']['jdk_version'] = '7'
 
 include_recipe "java"
+include_recipe "mysql::server"
 
 #Create WildFly System user
 user 'jboss' do
@@ -36,10 +37,55 @@ user 'jenkins' do
   comment 'Jenkins'
   shell '/bin/bash'
   supports manage_home: true
-  action [:create, :lock]
+  action [:create]
 end
 
-#Add jenkins user to JBoss group
+
+#Add user jenkins to group jboss
+execute "Add user jenkins to group jboss" do
+    command "usermod -a -G jboss jenkins"
+    action :run
+    cwd "/"
+end
+
+#Create .ssh directory for jenkins
+directory '/home/jenkins/.ssh' do
+    owner 'jenkins'
+    group 'jenkins'
+    mode 0700
+    action :create    
+end
+
+
+#Copy public key to jenkins home
+template File.join('home', 'jenkins', '.ssh', 'jenkins_rsa.pub') do
+  source 'jenkins_rsa.pub'
+  user 'jenkins'
+  group 'jenkins'
+  mode '0600'
+end
+
+#Copy jenkins public key to authorized_keys
+execute "Copy jenkins public key to authorized_keys" do
+  command "cat jenkins_rsa.pub >> authorized_keys"  
+  action :run
+  cwd "/home/jenkins/.ssh"
+end
+
+#Set proper ownership of authorized_keys
+execute "Make sure jenkins is owner of his authorized_keys" do
+  command "chown jenkins:jenkins /home/jenkins/.ssh/authorized_keys"
+  action :run
+  cwd "/home/jenkins/.ssh"
+end
+
+#Set proper access rights for authorized_keys
+execute "Change access rights for /home/jenkins/.ssh/authozied_keys" do
+  command "chmod 600 /home/jenkins/.ssh/authorized_keys"
+  action :run
+  cwd "/home/jenkins/.ssh"
+end 
+
 #------------------------------------------Jenkins support------------------------------------------
 
 
@@ -58,8 +104,14 @@ execute "Unpack and install WildFly" do
 end
 
 
-execute "Change ownership of wildfly installation" do
+execute "Change ownership of WildFly installation" do
     command "chown jboss:jboss -R /opt/wildfly"
+    action :run
+    cwd '/'
+end
+
+execute "Change access rights for WildFly installation" do
+    command "chmod 770 -R /opt/wildfly"
     action :run
     cwd '/'
 end
