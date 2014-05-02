@@ -106,7 +106,7 @@ end
 
 #Replace standalone configuration file
 template '/opt/wildfly/standalone/configuration/standalone.xml' do
-  source 'configuration.xml.erb'
+  source 'standalone.xml.erb'
   user 'jboss'
   group 'jboss'
   mode '0770'
