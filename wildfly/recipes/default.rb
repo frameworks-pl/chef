@@ -11,7 +11,8 @@
 node.default['java']['jdk_version'] = '7'
 
 include_recipe "java"
-include_recipe "mysql::server"
+#include_recipe "mysql::server"
+#include_recipe "simple_iptables"
 
 #Create WildFly System user
 user 'jboss' do
@@ -124,6 +125,18 @@ template File.join('etc', 'init.d', 'wildfly') do
   group 'root'
   mode '0755'
 end
+
+#simple_iptables_rule "wildfly on port 8080" do
+#  rule "--proto tcp --dport 8080"
+#  jump "ACCEPT"
+#  chain "INPUT"
+#end
+
+#simple_iptables_rule "wildfly on port 9990" do
+#  rule "--proto tcp --dport 9990"
+#  jump "ACCEPT"
+#  chain "INPUT"
+#end
 
 # Start the Wildfly Service
 service 'wildfly' do
