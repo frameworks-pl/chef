@@ -104,6 +104,14 @@ execute "Unpack and install WildFly" do
   cwd "/root"
 end
 
+#Replace standalone configuration file
+template '/opt/wildfly/standalone/configuration/standalone.xml' do
+  source 'configuration.xml.erb'
+  user 'jboss'
+  group 'jboss'
+  mode '0770'
+end
+
 
 execute "Change ownership of WildFly installation" do
     command "chown jboss:jboss -R /opt/wildfly"
