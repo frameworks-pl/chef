@@ -5,8 +5,8 @@ batch
 # Add postgresql JDBC driver
 /subsystem=datasources/jdbc-driver=mysql:add( \
     driver-name=mysql, \
-    driver-module-name=org.mysql.jdbc \
-    driver-xa-datasource-class-name="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" \
+    driver-module-name=com.mysql \
+    driver-class-name="com.mysql.jdbc.Driver" \
 )
  
 # Add a non-XA datasource

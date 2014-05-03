@@ -120,8 +120,8 @@ end
 
 
 #Install MySQL Connector driver
-cookbook_file "/opt/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-java-5.1.30-bin.jar" do
-  source "mysql-connector-java-5.1.30-bin.jar"
+cookbook_file "/opt/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-java-5.1.13.jar" do
+  source "mysql-connector-java-5.1.13.jar"
   mode 0755
 end
 
@@ -158,6 +158,19 @@ end
 #Add/update WildFly admin user (password needs to be changed manually!!!)
 execute "Set up WildFly admin user" do
   command "/opt/wildfly/bin/add-user.sh admin admin --silent=true"
+  action :run
+  cwd '/'
+end
+
+#Extract mysql driver/ds installation script
+template '/root/chumbaDS.cli' do
+  source 'chumbaDS.cli.erb'
+  mode 0700
+end
+
+#Execute mysql driver/ds installation script
+execute "Install mysql driver and datasource (ChumbaDS)" do
+  command "/opt/wildfly/bin/jboss-cli.sh --file=/root/chumbaDS.cli"
   action :run
   cwd '/'
 end
