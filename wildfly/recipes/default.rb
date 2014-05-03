@@ -111,6 +111,14 @@ template '/opt/wildfly/standalone/configuration/standalone.xml' do
   mode '0770'
 end
 
+
+execute "Create directory for MySQL Connector driver" do
+  command "mkdir -p /opt/wildfly/modules/system/layers/base/com/mysql/main"
+  action :run
+  cwd '/'
+end
+
+
 #Install MySQL Connector driver
 cookbook_file "/opt/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-java-5.1.30-bin.jar" do
   source "mysql-connector-java-5.1.30-bin.jar"
