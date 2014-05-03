@@ -1,0 +1,29 @@
+# Demo CLI script
+connect
+batch
+ 
+# Add postgresql JDBC driver
+#/subsystem=datasources/jdbc-driver=postgresql:add( \
+#    driver-name=postgresql, \
+#    driver-module-name=org.postgresql.jdbc, \
+#   driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource \
+#)
+ 
+# Add a non-XA datasource
+data-source add \
+    --name=ChumbaDS \
+    --driver-name=mysql \
+    --connection-url=jdbc:mysql://localhost:3306/chumba_casino_testdb \
+    --jndi-name=java:/jdbc/chumbaDS \
+    --user-name=root \
+    --password=undefined \
+    --use-ccm=false \
+    --max-pool-size=undefined \
+    --blocking-timeout-wait-millis=undefined \
+    --new-connection-sql=undefined
+data-source enable --name=ChumbaDS
+ 
+# Execute and reload
+run-batch
+:reload
+
