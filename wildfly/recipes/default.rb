@@ -2,18 +2,11 @@
 # Cookbook Name:: wildfly
 # Recipe:: default
 #
-# Copyright 2014, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# janusz.grabis@vgw.co
 
 #By default java cookbook isntalls version 6, WildFly needs 7
-
-
 node.default['java']['jdk_version'] = '7'
 include_recipe 'java'
-
-
 
 #include_recipe "mysql::server"
 #include_recipe "simple_iptables"
@@ -36,7 +29,6 @@ end
 
 
 #------------------------------------------Jenkins support------------------------------------------
-
 #Create jenkins user
 user 'jenkins' do
   comment 'Jenkins'
@@ -48,17 +40,18 @@ end
 
 #Add user jenkins to group jboss
 execute "Add user jenkins to group jboss" do
-    command "usermod -a -G jboss jenkins"
-    action :run
-    cwd "/"
+  command "usermod -a -G jboss jenkins"
+  action :run
+  cwd "/"
 end
+
 
 #Create .ssh directory for jenkins
 directory '/home/jenkins/.ssh' do
-    owner 'jenkins'
-    group 'jenkins'
-    mode 0700
-    action :create    
+  owner 'jenkins'
+  group 'jenkins'
+  mode 0700
+  action :create    
 end
 
 
@@ -70,12 +63,14 @@ template File.join('home', 'jenkins', '.ssh', 'jenkins_rsa.pub') do
   mode '0600'
 end
 
+
 #Copy jenkins public key to authorized_keys
 execute "Copy jenkins public key to authorized_keys" do
   command "cat jenkins_rsa.pub >> authorized_keys"  
   action :run
   cwd "/home/jenkins/.ssh"
 end
+
 
 #Set proper ownership of authorized_keys
 execute "Make sure jenkins is owner of his authorized_keys" do
@@ -84,13 +79,13 @@ execute "Make sure jenkins is owner of his authorized_keys" do
   cwd "/home/jenkins/.ssh"
 end
 
+
 #Set proper access rights for authorized_keys
 execute "Change access rights for /home/jenkins/.ssh/authozied_keys" do
   command "chmod 600 /home/jenkins/.ssh/authorized_keys"
   action :run
   cwd "/home/jenkins/.ssh"
 end 
-
 #------------------------------------------Jenkins support------------------------------------------
 
 
@@ -116,17 +111,24 @@ template '/opt/wildfly/standalone/configuration/standalone.xml' do
   mode '0770'
 end
 
-
-execute "Change ownership of WildFly installation" do
-    command "chown jboss:jboss -R /opt/wildfly"
-    action :run
-    cwd '/'
+#Install MySQL Connector driver
+cookbook_file "/opt/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-java-5.1.30-bin.jar" do
+  source "mysql-connector-java-5.1.30-bin.jar"
+  mode 0755
 end
 
+
+execute "Change ownership of WildFly installation" do
+  command "chown jboss:jboss -R /opt/wildfly"
+  action :run
+  cwd '/'
+end
+
+
 execute "Change access rights for WildFly installation" do
-    command "chmod 770 -R /opt/wildfly"
-    action :run
-    cwd '/'
+  command "chmod 770 -R /opt/wildfly"
+  action :run
+  cwd '/'
 end
 
 
@@ -138,18 +140,16 @@ template File.join('etc', 'init.d', 'wildfly') do
   mode '0755'
 end
 
+
 # Start the Wildfly Service
 service 'wildfly' do
   action :start
 end
 
+
 #Add/update WildFly admin user (password needs to be changed manually!!!)
 execute "Set up WildFly admin user" do
-    command "/opt/wildfly/bin/add-user.sh admin admin --silent=true"
-    action :run
-    cwd '/'
+  command "/opt/wildfly/bin/add-user.sh admin admin --silent=true"
+  action :run
+  cwd '/'
 end
-
-
-
-
