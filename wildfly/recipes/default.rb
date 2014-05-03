@@ -8,9 +8,13 @@
 #
 
 #By default java cookbook isntalls version 6, WildFly needs 7
-node.default['java']['jdk_version'] = '7'
 
-include_recipe "java"
+
+node.default['java']['jdk_version'] = '7'
+include_recipe 'java'
+
+
+
 #include_recipe "mysql::server"
 #include_recipe "simple_iptables"
 
@@ -106,7 +110,7 @@ end
 
 #Replace standalone configuration file
 template '/opt/wildfly/standalone/configuration/standalone.xml' do
-  source 'configuration.xml.erb'
+  source 'standalone.xml.erb'
   user 'jboss'
   group 'jboss'
   mode '0770'
@@ -134,22 +138,18 @@ template File.join('etc', 'init.d', 'wildfly') do
   mode '0755'
 end
 
-#simple_iptables_rule "wildfly on port 8080" do
-#  rule "--proto tcp --dport 8080"
-#  jump "ACCEPT"
-#  chain "INPUT"
-#end
-
-#simple_iptables_rule "wildfly on port 9990" do
-#  rule "--proto tcp --dport 9990"
-#  jump "ACCEPT"
-#  chain "INPUT"
-#end
-
 # Start the Wildfly Service
 service 'wildfly' do
   action :start
 end
+
+#Add/update WildFly admin user (password needs to be changed manually!!!)
+execute "Set up WildFly admin user" do
+    command "/opt/wildfly/bin/add-user.sh admin admin --silent=true"
+    action :run
+    cwd '/'
+end
+
 
 
 
