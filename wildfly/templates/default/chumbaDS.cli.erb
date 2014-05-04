@@ -1,11 +1,19 @@
 # Demo CLI script
 connect
 batch
+
+#try \
+#data-source disable --name=ChumbaDS
+#/subsystem=datasources/jdbc-driver=mysql:remove 
+#/subsystem=datasources/data-source=ChumbaDS:remove
+#catch \
+#end-try 
+
  
 # Add postgresql JDBC driver
 /subsystem=datasources/jdbc-driver=mysql:add( \
-    driver-name=mysql, \
-    driver-module-name=com.mysql \
+    driver-name="mysql", \
+    driver-module-name="com.mysql", \
     driver-class-name="com.mysql.jdbc.Driver" \
 )
  
@@ -13,7 +21,7 @@ batch
 data-source add \
     --name=ChumbaDS \
     --driver-name=mysql \
-    --connection-url=jdbc:mysql://localhost:3306/chumba_casino_testdb \
+    --connection-url=jdbc:mysql://54.221.151.240:3306/chumba_casino_testdb_v2 \
     --jndi-name=java:/jdbc/chumbaDS \
     --user-name=root \
     --password=undefined \

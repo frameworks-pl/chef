@@ -119,10 +119,17 @@ execute "Create directory for MySQL Connector driver" do
 end
 
 
-#Install MySQL Connector driver
-cookbook_file "/opt/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-java-5.1.13.jar" do
-  source "mysql-connector-java-5.1.13.jar"
+#Copy mysql driver to wildfly root
+cookbook_file "/root/modules.system.layers.base.com.mysql.tar.gz" do
+  source "modules.system.layers.base.com.mysql.tar.gz"
   mode 0755
+end
+
+
+execute "Extract MySQL driver" do
+  command "tar xvfz /root/modules.system.layers.base.com.mysql.tar.gz"
+  action :run
+  cwd '/opt/wildfly' 
 end
 
 
@@ -149,6 +156,13 @@ template File.join('etc', 'init.d', 'wildfly') do
 end
 
 
+#Extract mysql driver/ds installation script
+template '/root/chumbaDS.cli' do
+  source 'chumbaDS.cli.erb'
+  mode 0700
+end
+
+
 # Start the Wildfly Service
 service 'wildfly' do
   action :start
@@ -162,11 +176,6 @@ execute "Set up WildFly admin user" do
   cwd '/'
 end
 
-#Extract mysql driver/ds installation script
-template '/root/chumbaDS.cli' do
-  source 'chumbaDS.cli.erb'
-  mode 0700
-end
 
 #Execute mysql driver/ds installation script
 execute "Install mysql driver and datasource (ChumbaDS)" do
